@@ -1,6 +1,11 @@
-kotlin-examples
-===============
+## Spring Boot Example
 
-[![official JetBrains project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+This is a basic example of how to use Kotlin in a Spring Boot application. See the [accompanying tutorial](http://kotlinlang.org/docs/tutorials/spring-boot-restful.html)
+for more information.
 
-Various examples for Kotlin
+To run:
+
+```
+$ ./gradlew bootRun
+```
+
