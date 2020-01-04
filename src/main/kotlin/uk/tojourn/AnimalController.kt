@@ -10,9 +10,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import java.util.TimeZone
 import java.text.SimpleDateFormat
 
-
-
-
 @RestController
 class AnimalController {
 
@@ -23,12 +20,7 @@ class AnimalController {
 
         val toParse = "30-08-2017 02:30"
         val date = df.parse(toParse)
-
         val mapper = ObjectMapper()
-//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-//        // StdDateFormat is ISO8601 since jackson 2.9
-//        mapper.dateFormat = StdDateFormat().withColonInTimeZone(true)
-//        val result = mapper.writeValueAsString(event)
         val dob = date
            return Animal("Cat", "Ragdoll" , name, dob)
     }
