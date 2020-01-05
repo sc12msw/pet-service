@@ -17,17 +17,25 @@ class UserController : PetServiceController() {
 
     @PostMapping("/user")
     fun createUser(@Valid @RequestBody user: User): ResponseEntity<PetServiceResponse> {
-        logger.info("Creating user: $user")
-        val uuid = UUID.randomUUID()
-        val randomUUIDString = uuid.toString()
-        logger.info("User $randomUUIDString has been created")
+        val userWithId = createAndAddUUIDToUser(user)
+        logger.info("Creating user: $userWithId")
+        val successfullyCreatedUserMessage = "User $userWithId.id has been created"
+        // * TODO add db stuff here
+        logger.info(successfullyCreatedUserMessage)
         val responseHeaders = HttpHeaders()
-        responseHeaders["Location"] = "/user/$randomUUIDString"
+        responseHeaders["Location"] = "/user/$userWithId.id"
         return ResponseEntity(
-                PetServiceResponse("User $randomUUIDString created successfully", 2001),
+                PetServiceResponse(successfullyCreatedUserMessage, 2001),
                 responseHeaders,
                 HttpStatus.CREATED
         )
+    }
+
+    private fun createAndAddUUIDToUser (user: User) : User{
+        val uuid = UUID.randomUUID()
+        val randomUUIDString = uuid.toString()
+        user.id = randomUUIDString
+        return user
     }
 
 
