@@ -5,43 +5,9 @@ services:
     ports:
       - "27017:27017"
 
-  zookeeper:
-    image: wurstmeister/zookeeper
+  pet-service:
+    image: pet-service:dev
     ports:
-      - "2181:2181"
+      - "8080:8080"
 
-  kafka:
-    image: wurstmeister/kafka
-    ports:
-      - "9092:9092"
-    environment:
-      HOSTNAME_COMMAND: "route -n | awk '/UG[ \t]/{print $$2}'"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "dev.betting:1:1"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - zookeeper
-
-  #rabbitmq:
-  #    image: rabbitmq:3-management
-  #    ports:
-  #      - "15672:15672"
-  #      - "5672:5672"
-  #    environment:
-  #      RABBITMQ_DEFAULT_PASS: "rabbitmq"
-  #      RABBITMQ_DEFAULT_USER: "rabbitmq"
-  #      RABBITMQ_DEFAULT_VHOST: "/feedme"
-
-  provider:
-      image: sbgfeedme/provider:latest
-      ports:
-        - "8181:8181"
-        - "8282:8282"
-
-  feedme-producer:
-    image: feedme-producer:dev
-
-  feedme-consumer:
-    image: feedme-consumer:dev
 
