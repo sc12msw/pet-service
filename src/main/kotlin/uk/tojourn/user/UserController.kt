@@ -1,33 +1,50 @@
 package uk.tojourn.user
 
+import com.google.gson.Gson
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import uk.tojourn.generic.PetServiceController
 import uk.tojourn.generic.PetServiceResponse
 import java.util.*
 import javax.validation.Valid
 
 
-@RestController
+@RestController("/user/")
 class UserController : PetServiceController() {
 
-    @PostMapping("/user")
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @PostMapping
     fun createUser(@Valid @RequestBody user: User): ResponseEntity<PetServiceResponse> {
         val userWithId = createAndAddUUIDToUser(user)
-        logger.info("Creating user: $userWithId")
-        val successfullyCreatedUserMessage = "User $userWithId.id has been created"
-        // * TODO add db stuff here
+        val userId = userWithId.id
+        logger.info("Creating user $userId in database")
+        userRepository.save(user)
+        val successfullyCreatedUserMessage = "User $userId has been created"
         logger.info(successfullyCreatedUserMessage)
         val responseHeaders = HttpHeaders()
-        responseHeaders["Location"] = "/user/$userWithId.id"
+        responseHeaders["Location"] = "/user/$userId"
         return ResponseEntity(
                 PetServiceResponse(successfullyCreatedUserMessage, 2001),
                 responseHeaders,
                 HttpStatus.CREATED
+        )
+    }
+
+    // TODO implement GET all
+
+    @GetMapping("{id}")
+    fun getUserById(@PathVariable(value="id") id: String) :  ResponseEntity<PetServiceResponse> {
+        val user = userRepository.findById(id)
+        val gson = Gson()
+        val jsonString = gson.toJson(user)
+        return ResponseEntity(
+                PetServiceResponse(jsonString, 2000),
+                HttpStatus.OK
         )
     }
 

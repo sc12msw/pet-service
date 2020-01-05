@@ -1,3 +1,3 @@
 package uk.tojourn.generic
 
-data class PetServiceResponse(val message: String, val code: Int)
+data class PetServiceResponse(val body: String, val code: Int)
