@@ -12,13 +12,13 @@ import java.util.*
 import javax.validation.Valid
 
 
-@RestController("/user/")
+@RestController
 class UserController : PetServiceController() {
 
     @Autowired
     lateinit var userRepository: UserRepository
 
-    @PostMapping
+    @PostMapping("/user")
     fun createUser(@Valid @RequestBody user: User): ResponseEntity<PetServiceResponse> {
         val userWithId = createAndAddUUIDToUser(user)
         val userId = userWithId.id
@@ -35,12 +35,27 @@ class UserController : PetServiceController() {
         )
     }
 
-    // TODO implement GET all
 
-    // TODO GET TO WORK
-    @GetMapping("{id}")
-    fun getUserById(@PathVariable(value = "id") id: String): ResponseEntity<PetServiceResponse> {
+    @GetMapping("/user")
+    fun getUsers() :  ResponseEntity<PetServiceResponse> {
+        val users = userRepository.findAll()
+        val gson = Gson()
+        val jsonString = gson.toJson(users)
+        return ResponseEntity(
+                PetServiceResponse(jsonString, 2000),
+                HttpStatus.OK
+        )
+    }
+
+    @GetMapping("/user/{id}")
+    fun getUserById(@PathVariable(value="id") id: String) :  ResponseEntity<PetServiceResponse> {
         val user = userRepository.findById(id)
+        if (!user.isPresent){
+            return ResponseEntity(
+                    PetServiceResponse("Not Found", 4004),
+                    HttpStatus.NOT_FOUND
+            )
+        }
         val gson = Gson()
         val jsonString = gson.toJson(user)
         return ResponseEntity(
@@ -49,7 +64,8 @@ class UserController : PetServiceController() {
         )
     }
 
-    private fun createAndAddUUIDToUser(user: User): User {
+
+    private fun createAndAddUUIDToUser (user: User) : User{
         val uuid = UUID.randomUUID()
         val randomUUIDString = uuid.toString()
         user.id = randomUUIDString
